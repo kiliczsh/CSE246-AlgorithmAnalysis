@@ -1,1 +1,4 @@
-# CSE246_Algorithm_Analysis
+# CSE246-AlgorithmAnalysis
+
+- Berkay Yaman :octocat:
+- Muhammed Kılıç
