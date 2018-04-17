@@ -2,55 +2,74 @@ import sys
 import time
 import numpy as np
 import xlsxwriter
-import insertion_sort from insertion_sort
-import merge_sort from merge_sort
+from insertion_sort import insertionSort
+from merge_sort import mergeSort
 
-def writeColumnTitles(worksheet,row,column):
-    worksheet.write(row,column+1,'Best Case')
-    worksheet.write(row,column+2,'Random Array')
-    worksheet.write(row,column+3,'Worst Case')
+sortTypes = {
+    'merge-sort':['merge-sort',1],
+    'insertion-sort':['insertion-sort',3]
+}
 
-count=0
-rowCount=0
-workbook=xlsxwriter.Workbook('out/'+sys.argv[1])
-worksheet=workbook.add_worksheet()
+printCases=['Random Array','Worst Case','Best Case']
 
+filename=sys.argv[1]
+condition=sys.argv[2]
+kthElement=9
 row=0
 column=0
-writeColumnTitles(worksheet,row,column)
+
+def writeColumnTitles(worksheet,row,column,condition):
+    for i in range(1,sortTypes[condition][1]+1):
+        worksheet.write(row,column+i,printCases[i-1])
+
+def prepareArraysForCases(condition):
+    normal_array=np.random.random_integers(0,10000,size=(input_size))
+    if(condition==sortTypes['insertion-sort'][0]):
+        best_case=normal_array.copy()
+        insertionSort(best_case,1)
+        temp=best_case
+        worst_case=list(reversed(temp)).copy()
+        return [normal_array,worst_case,best_case]
+    elif(condition==sortTypes['merge-sort'][0]):
+        return [normal_array]
+def runFunction(condition,alist,k):
+    if condition == sortTypes['insertion-sort'][0]:
+        start_time=time.time()
+        kthElement=insertionSort(alist,k)
+        end_time=time.time()
+    elif condition == sortTypes['merge-sort'][0]:
+        start_time=time.time()
+        kthElement=mergeSort(alist)
+        end_time=time.time()
+    return end_time-start_time
+
+rowCount=0
+workbook=xlsxwriter.Workbook('out/'+filename)
+worksheet=workbook.add_worksheet()
+
+
+writeColumnTitles(worksheet,row,column,'merge-sort')
+
+count=0
+cases=[]
 for input_size in range(1000,10001,1000):
     rowCount+=1
     worksheet.write(row+rowCount,column,str(input_size))
-    normal_array=np.random.random_integers(0,10000,size=(input_size))
-    best_case=normal_array.copy()
-    insertionSort(best_case,1)
-    temp=best_case
-    worst_case=list(reversed(temp)).copy()
-    condition=int(sys.argv[2])
-    for array in [best_case,normal_array,worst_case]:
-        if condition==0:
-            start_time=time.time()
-            kthElement=insertionSort(array,9)
-            end_time=time.time()
-        else if(condition==1):
-            start_time=time.time()
-            kthElement=insertionSort(array,9)
-            end_time=time.time()
-        else if(condition==2):
-            start_time=time.time()
-            kthElement=insertionSort(array,9)
-            end_time=time.time()
-
-        if count==0:
-            print("Best case: %f"%(end_time-start_time),end="   ")
-            worksheet.write(row+rowCount,column+1,str(end_time-start_time))
-        elif count==1:
-            print("Normal array: %f"%(end_time-start_time),end="   ")
-            worksheet.write(row+rowCount,column+2,str(end_time-start_time))
+    endStr=''
+    cases=prepareArraysForCases(condition)
+    numOfCases=len(cases)
+    print('Array Length: '+str(input_size),'-----',end=' ')
+    for i in cases:
+        totaltime=runFunction(condition,i,kthElement)
+        if(count==numOfCases-1):
+            endStr='\n'
         else:
-            print("Worst case: %f"%(end_time-start_time))
-            worksheet.write(row+rowCount,column+3,str(end_time-start_time))
+            endStr='                '
+        print(printCases[count]+": %f"%totaltime,end=endStr)
+        worksheet.write(row+rowCount,column+count+1,totaltime)
+    
         count+=1
-        count=count%3
+        count=count%numOfCases
+
 workbook.close()
 exit()
