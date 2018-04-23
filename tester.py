@@ -65,10 +65,13 @@ def prepareArraysForCases(i_size,condition):
     elif(condition==sortTypes['quick-first'][0]):
         best_case=normal_array.copy()
         best_case=sorted(best_case)
-        temp=best_case
-        worst_case=list(reversed(temp)).copy()
+        temp=best_case.copy()
+        #worst_case=list(reversed(temp))
+        worst_case=best_case.copy()
+        lnt=len(normal_array)
+        halflnt=lnt//2
         saveArray('input',i_size,condition,[normal_array,best_case,worst_case])
-        return [[normal_array,9],[worst_case,len(worst_case)-1],[best_case,1]]
+        return [[normal_array,9],[worst_case,1],[best_case,1]]
     elif(condition==sortTypes['quick-median'][0]):
         best_case=normal_array.copy()
         best_case=sorted(best_case)
@@ -106,7 +109,7 @@ writeColumnTitles(worksheet,row,column,condition)
 count=0
 cases=[]
 step=10000
-for input_size in range(1000,111000,step):
+for input_size in range(101000,111000,step):
     rowCount+=1
     worksheet.write(row+rowCount,column,str(input_size))
     endStr=''
