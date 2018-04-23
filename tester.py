@@ -58,28 +58,26 @@ def prepareArraysForCases(i_size,condition):
         saveArray('input',i_size,condition,[normal_array,best_case,worst_case])
         return [[normal_array,9],[worst_case,9],[best_case,9]]
     elif(condition==sortTypes['merge-sort'][0]):
-        worst_case=normal_array.copy()
-        best_case=normal_array.copy()
+        best_case=sorted(normal_array.copy())
+        worst_case=list(reversed(normal_array.copy()))
         saveArray('input',i_size,condition,[normal_array,best_case,worst_case])
         return [[normal_array,9],[worst_case,9],[best_case,9]]
     elif(condition==sortTypes['quick-first'][0]):
         best_case=normal_array.copy()
-        mergeSort(best_case)
+        best_case=sorted(best_case)
         temp=best_case
         worst_case=list(reversed(temp)).copy()
         saveArray('input',i_size,condition,[normal_array,best_case,worst_case])
         return [[normal_array,9],[worst_case,len(worst_case)-1],[best_case,1]]
     elif(condition==sortTypes['quick-median'][0]):
         best_case=normal_array.copy()
-        mergeSort(best_case)
-        temp=best_case
-        worst_case=list(reversed(temp)).copy()
+        best_case=sorted(best_case)
+        temp=best_case.copy()
+        worst_case=list(reversed(temp))
         lnt=len(normal_array)
         halflnt=lnt//2
-        best_case[0],best_case[halflnt]=best_case[halflnt],best_case[0]
-        worst_case[halflnt],worst_case[lnt-1]=worst_case[lnt-1],worst_case[halflnt]
         saveArray('input',i_size,condition,[normal_array,best_case,worst_case])
-        return [[normal_array,9],[worst_case,lnt-1],[best_case,1]]
+        return [[normal_array,9],[worst_case,len(normal_array)-1],[best_case,1]]
 def runFunction(condition,alist,k):
     if condition == sortTypes['insertion-sort'][0]:
         start_time=time.time()
@@ -121,7 +119,7 @@ for input_size in range(1000,111000,step):
         if(count==numOfCases-1):
             endStr='\n'
         else:
-            endStr='                '
+            endStr='\n                              '
         print(printCases[count]+": %f"%totaltime,end=endStr)
         worksheet.write(row+rowCount,column+count+1,totaltime)
 
